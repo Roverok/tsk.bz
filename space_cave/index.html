@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Space Cave</title>
+<link rel="stylesheet" href="../third_party_javascript/jquery-ui-1.11.0.custom/jquery-ui.min.css"/>
+<script src="../third_party_javascript/jquery/jquery-1.11.1.min.js"></script>
+<script src="../third_party_javascript/jquery-ui-1.11.0.custom/jquery-ui.min.js"></script>
+<script>
+$(function() {
+	$("#dialog").dialog({
+		width: 600,
+		height: 550,
+		close: function(event, ui) {location.href='../'},
+		modal: true
+	}).hide().show("slide");
+	$("#restart").button().click(function() {location.href='./'});
+	$("#resetContainer").hide();
+});
+</script>
+</head>
+<body>
+<div id="dialog" style="text-align: center" title="Space Cave!">
+	<div id="gameContainer">
+		<span style="float: left">Score: <span id="points">0</span></span>
+		<span style="float: right">Speed: <span id="speed">0</span></span>
+		<canvas id="game" width="500" height="300" style="padding:0px; margin:0px;"></canvas>
+		<p>The flying saucer will move down automatically.  Click then hold your mouse button down to move it up.</p><p>Click anywhere to begin</p>
+	</div>
+	<div id="resetContainer">
+		<h1>Game Over</h1>
+		<p>You got <span id="finalPoints" style="font-weight: bold; margin: 10px"></span> points!</p>
+		<button id="restart">Restart Game</button>
+	</div>
+</div>
+<script src="space_cave.js"></script>
+</body>
+</html>

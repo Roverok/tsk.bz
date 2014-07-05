@@ -3,20 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <title>Tyler Keddy</title>
-<link rel="stylesheet" href="./javascript/jquery-ui-1.11.0.custom/jquery-ui.min.css"/>
-<script src="./javascript/jquery-ui-1.11.0.custom/external/jquery/jquery.js"></script>
-<script src="./javascript/jquery-ui-1.11.0.custom/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="./third_party_javascript/jquery-ui-1.11.0.custom/jquery-ui.min.css"/>
+<script src="./third_party_javascript/jquery/jquery-1.11.1.min.js"></script>
+<script src="./third_party_javascript/jquery-ui-1.11.0.custom/jquery-ui.min.js"></script>
 <script>
 $(function() {
-	$( "#dialog" ).dialog();
+	$("#splash").hide().show("slide");
 });
 </script>
 </head>
 <body>
-<div id="dialog" title="TSK.BZ">
-<p>Hi, welcome to my personal web page.  I'll put random things here from time to time.</p>
-<p>All code changes can be <a href="https://github.com/tskbz/tsk.bz">tracked on github</a>.</p>
-<p>- Tyler</p>
+<div id="splash" class="ui-widget" style="margin:100px;">
+	<div class="ui-widget-header" style="padding: 10px">TSK.BZ</div>
+	<div class="ui-widget-content" style="padding: 10px;">
+		<p>Hi, welcome to my personal web page.  I'll put random things here from time to time.</p>
+		<p><a href="./space_cave/">Space Cave Game</a> | <a href="https://github.com/tskbz/tsk.bz">Change Log</a>
+		<p>Disclaimer: my code on this site was hacked together quickly and for fun :)</p>
+		<p>- Tyler</p>
+	</div>
 </div>
 </body>
 </html>
