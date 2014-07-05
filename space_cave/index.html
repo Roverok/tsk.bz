@@ -20,12 +20,21 @@ $(function() {
 </script>
 </head>
 <body>
-<div id="dialog" style="text-align: center" title="Space Cave!">
+<div id="dialog" title="Space Cave!" style="text-align: center">
 	<div id="gameContainer">
 		<span style="float: left">Score: <span id="points">0</span></span>
 		<span style="float: right">Speed: <span id="speed">0</span></span>
-		<canvas id="game" width="500" height="300" style="padding:0px; margin:0px;"></canvas>
-		<p>The flying saucer will move down automatically.  Click then hold your mouse button down to move it up.</p><p>Click anywhere to begin</p>
+		<div style="position: relative;">
+        <canvas id="world" width="500" height="300" style="position: absolute; left: 25px; top: 0; z-index: 0;margin: auto;"></canvas>
+        <canvas id="player" width="500" height="300" style="position:absolute; left: 25px; top: 0; z-index: 1;margin: auto"></canvas>
+     	</div>
+        <div style="position: absolute; bottom:0px">
+        The flying saucer will move down automatically.
+        Click then hold your mouse button down (or finger if using a tablet) to move it up.
+        <br>
+        <br>
+        Click anywhere to begin
+        </div>
 	</div>
 	<div id="resetContainer">
 		<h1>Game Over</h1>
@@ -33,6 +42,6 @@ $(function() {
 		<button id="restart">Restart Game</button>
 	</div>
 </div>
-<script src="space_cave.js"></script>
+<script src="space_cave_1.1.js"></script>
 </body>
 </html>

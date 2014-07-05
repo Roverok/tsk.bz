@@ -9,24 +9,24 @@
  * that's creeping me online, look away now :)
  */
 
-// jquery stuff
-var canvasElement = $('#game');
 var pointsElement = $('#points');
 var gameContainerElement = $('#gameContainer');
 var speedElement = $('#speed');
 var finalPointsElement = $('#finalPoints');
 var resetContainerElement = $('#resetContainer');
-
-// 'constants'
-var context = canvasElement[0].getContext('2d');
-var fps = 60;
+var worldCanvasElement = $('#world');
+var playerCanvasElement = $('#player');
+var fps = 30;
 var millisecondsInSecond = 1000;
 var playerImageFile = 'saucer.png';
+var playerContext = playerCanvasElement[0].getContext('2d');
+var worldContext = worldCanvasElement[0].getContext('2d');
+//var lastDraw;
 
 var player = {
 	'directions' : {UP : 'UP', DOWN : 'DOWN', STILL : 'STILL'},
 	'image' : new Image(),
-	'leftOffset' : 5,
+	'leftOffset' : 3, // number of elements over in caveTop
 	'direction' : '',
 	'upTickFrequency' : millisecondsInSecond / 200,
 	'downTickFrequency' : millisecondsInSecond / 175,
@@ -37,7 +37,8 @@ var player = {
 	'pixelsForError' : 125,
 	'score' : 0,
 	'draw' : function(){
-		context.drawImage(player.image, player.x - player.size / 2, player.y - player.size / 2);
+		playerContext.clearRect(player.x - player.size, player.y - player.size, player.size*2, player.size*2);
+		playerContext.drawImage(player.image, player.x - player.size / 2, player.y - player.size / 2);
 	},
 	'tick' : function() {
 		// collision detection
@@ -68,7 +69,7 @@ var player = {
 		setTimeout(function(){player.tick();}, player.downTickFrequency);
 	},
 	'initialize' : function() {
-		player.x = world.caveLineThickness * player.leftOffset;
+		player.x = player.leftOffset * world.caveLineThickness;
 		player.y = world.caveTop[0] + player.size + (player.pixelsForError / 2);
 		player.image.src = playerImageFile;
 		player.direction = player.directions.STILL;
@@ -82,25 +83,28 @@ var player = {
 };
 
 var world = {
+	'caveLineThickness' : 20,
 	'levelTickDecrease' : 2,
 	'levelInterval' : millisecondsInSecond * 5,
 	'pointInterval' : millisecondsInSecond / 5,
 	'maxTickFrequency' : millisecondsInSecond / 150,
-	'caveLineThickness' : 5,
 	'caveTop' : new Array(),
 	'tickFrequency' : millisecondsInSecond / 30,
 	'maxCaveVariance' : 10,
 	'top' : 0,
-	'bottom' : canvasElement.height(),
+	'bottom' : worldCanvasElement.height(),
 	'left' : 0,
-	'right' : canvasElement.width(),
+	'right' : worldCanvasElement.width(),
 	'draw' : function() {
-		for (i = world.left; i < world.right; i = i + world.caveLineThickness)
+		worldContext.clearRect(world.top, world.left, world.right, world.bottom);
+		for (x = world.left; x < world.right; x = x + world.caveLineThickness)
 		{
-			context.beginPath();
-			context.moveTo(world.left+i, world.caveTop[i / world.caveLineThickness]);
-			context.lineTo(world.left+i, world.caveTop[i / world.caveLineThickness] + player.size + player.pixelsForError);
-			context.stroke();
+			var elementInCaveTop = x / world.caveLineThickness;
+			
+			worldContext.beginPath();
+			worldContext.moveTo(x, world.caveTop[elementInCaveTop]);
+			worldContext.lineTo(x, world.caveTop[elementInCaveTop] + player.size + player.pixelsForError);
+			worldContext.stroke();
 		}
 	},
 	'determineCaveWall' : function (basePosition) {
@@ -140,16 +144,19 @@ var world = {
 	},
 	'initialize' : function() {
 		
-		context.lineWidth = world.caveLineThickness;
-		for (i = world.left; i < world.right / world.caveLineThickness; i++)
+		worldContext.lineWidth = world.caveLineThickness;
+		
+		for (x = world.left; x < world.right; x = x + world.caveLineThickness)
 		{
-			if (i == world.left)
+			var elementInCaveTop = x / world.caveLineThickness;
+			
+			if (x == world.left)
 			{
-				world.caveTop[i] = world.bottom / 2; // start in center
+				world.caveTop[elementInCaveTop] = world.bottom / 2; // start in center
 			}
 			else
 			{
-				world.caveTop[i] = world.determineCaveWall(world.caveTop[i - 1]);
+				world.caveTop[elementInCaveTop] = world.determineCaveWall(world.caveTop[elementInCaveTop - 1]);
 			}
 		}
 	},
@@ -177,20 +184,32 @@ var world = {
 
 function draw()
 {
-	context.clearRect(world.left, world.top, world.right, world.bottom);
-	world.draw();
-	player.draw();
-	setTimeout(function(){draw();}, 1000 / fps);
-	//requestAnimationFrame(draw);
+//	if (lastDraw == undefined || 
+//			new Date().getTime() - lastDraw >= (millisecondsInSecond / fps))
+//	{
+		world.draw();
+		player.draw();
+		setTimeout(function(){draw();}, millisecondsInSecond / fps);
+//		lastDraw = new Date().getTime();
+//		requestAnimationFrame(draw);
+//	}
 }
 
 function initializeGame()
 {
-	gameContainerElement.bind('mousedown', function() {
+	gameContainerElement.on('mousedown', function() {
 		player.moveUp();
 	});
+	
+	gameContainerElement.on('touchstart', function() {
+		player.moveUp();
+	});
+	
+	gameContainerElement.on('touchend', function() {
+		player.moveDown();
+	});
 
-	gameContainerElement.bind('mouseup', function() {
+	gameContainerElement.on('mouseup', function() {
 		player.moveDown();
 	});
 
